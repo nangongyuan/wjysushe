@@ -10,7 +10,6 @@
  */
 package com.wjysushe.dao;
 
-import com.wjysushe.bean.Dormitory;
 import com.wjysushe.bean.Repairs;
 import com.wjysushe.utils.DBHelper;
 
