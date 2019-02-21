@@ -64,17 +64,4 @@ public class UserDao {
         return ret;
     }
 
-    public static void main(String[] args) {
-//        System.out.println(new UserDao().list(""));
-
-//        User user = new User();
-//        user.setRole(2);
-//        user.setName("teacher");
-//        user.setSno("121");
-//        user.setPassword("123456");
-//        user.setId(10L);
-//        new UserDao().update(user);
-
-        new UserDao().delete("and id=10");
-    }
 }
