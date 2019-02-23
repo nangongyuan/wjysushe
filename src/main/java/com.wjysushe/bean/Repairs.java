@@ -26,7 +26,13 @@ public class Repairs {
 
     private Long userId;
 
+    private String userName;
+
     private Long dormitoryId;
+
+    private String dormitoryName;
+
+    private String apartmentName;
 
     private String explanation;
 
@@ -100,5 +106,29 @@ public class Repairs {
 
     public void setLastUpdateTime(Date lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getDormitoryName() {
+        return dormitoryName;
+    }
+
+    public void setDormitoryName(String dormitoryName) {
+        this.dormitoryName = dormitoryName;
+    }
+
+    public String getApartmentName() {
+        return apartmentName;
+    }
+
+    public void setApartmentName(String apartmentName) {
+        this.apartmentName = apartmentName;
     }
 }

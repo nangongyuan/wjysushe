@@ -30,7 +30,10 @@ public class ApartmentDao {
 
 
     public List<Apartment> list(String where){
-        String sql = "select * from apartment where 1=1 ";
+        String sql = "select apartment.*,user.name as user_name from apartment,user where manager_id=user.id ";
+        if (where != null){
+            sql += where;
+        }
         List<Map<String, Object>> mapList = new DBHelper().query(sql,null);
         List<Apartment> apartmentList = new LinkedList<>();
         for (Map<String, Object> item : mapList) {
@@ -40,6 +43,7 @@ public class ApartmentDao {
             apartment.setName((String) item.get("name"));
             apartment.setCreateTime((Date) item.get("create_time"));
             apartment.setLastUpdateTime((Date) item.get("last_update_time"));
+            apartment.setManagerName((String) item.get("user_name"));
             apartmentList.add(apartment);
         }
         return apartmentList;
@@ -62,4 +66,5 @@ public class ApartmentDao {
         int ret = new DBHelper().update(sql, apartment.getManagerId(), apartment.getName(), apartment.getId());
         return ret;
     }
+
 }

@@ -11,6 +11,7 @@
 package com.wjysushe.bean;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -26,11 +27,25 @@ public class Dormitory {
 
     private Long apartmentId;
 
+    private String apartmentName;
+
     private String name;
+
+    private String member;
 
     private Date createTime;
 
     private Date lastUpdateTime;
+
+    private List<User> memberUser;
+
+    public List<User> getMemberUser() {
+        return memberUser;
+    }
+
+    public void setMemberUser(List<User> memberUser) {
+        this.memberUser = memberUser;
+    }
 
     public Long getId() {
         return id;
@@ -54,6 +69,22 @@ public class Dormitory {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getApartmentName() {
+        return apartmentName;
+    }
+
+    public void setApartmentName(String apartmentName) {
+        this.apartmentName = apartmentName;
+    }
+
+    public String getMember() {
+        return member;
+    }
+
+    public void setMember(String member) {
+        this.member = member;
     }
 
     public Date getCreateTime() {

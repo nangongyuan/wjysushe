@@ -29,7 +29,11 @@ import java.util.Map;
 public class RepairsDao {
 
     public List<Repairs> list(String where){
-        String sql = "select * from repairs where 1=1 ";
+        String sql = "select repairs.*,apartment.name as apartmentName,dormitory.name as dormitoryName,user.name as userName  from repairs,dormitory,apartment,user " +
+				"where repairs.dormitory_id=dormitory.id and dormitory.apartment_id=apartment.id and repairs.user_id=user.id ";
+        if (where != null){
+            sql += where;
+        }
         List<Map<String, Object>> mapList = new DBHelper().query(sql,null);
         List<Repairs> repairsList = new LinkedList<>();
         for (Map<String, Object> item : mapList) {
@@ -42,6 +46,9 @@ public class RepairsDao {
             repairs.setStatus((Integer) item.get("status"));
             repairs.setCreateTime((Date) item.get("create_time"));
             repairs.setLastUpdateTime((Date) item.get("last_update_time"));
+            repairs.setDormitoryName((String) item.get("dormitoryName"));
+            repairs.setApartmentName((String) item.get("apartmentName"));
+            repairs.setUserName((String) item.get("userName"));
             repairsList.add(repairs);
         }
         return repairsList;
@@ -61,7 +68,7 @@ public class RepairsDao {
 
     public Integer update(Repairs repairs){
         String sql = "update repairs set user_id=?, dormitory_id=? , explanation=?, reply=?, status=? where id=?";
-        int ret = new DBHelper().update(sql, repairs.getUserId(), repairs.getDormitoryId(), repairs.getExplanation(), repairs.getReply(), repairs.getStatus());
+        int ret = new DBHelper().update(sql, repairs.getUserId(), repairs.getDormitoryId(), repairs.getExplanation(), repairs.getReply(), repairs.getStatus(), repairs.getId());
         return ret;
     }
 

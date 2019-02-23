@@ -1,4 +1,5 @@
-<%--
+<%@ page import="com.wjysushe.bean.User" %>
+<%@ page import="static com.wjysushe.service.UserService.SESSION_USER" %><%--
   Created by IntelliJ IDEA.
   User: ly6333
   Date: 2019/2/20
@@ -6,113 +7,109 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Arcsoft文件管理系统</title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" th:href="@{/css/font.css}">
-    <link rel="stylesheet" th:href="@{/css/weadmin.css}">
-    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
-    <!--[if lt IE 9]>
-      <!--<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>-->
-    <!--<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>-->
-    <![endif]-->
-
-    <style>
-        .layui-form-item .layui-input-inline{
-            width: 390px;
-        }
-    </style>
+    <title>宿舍管理系统</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
-
 <body>
-<div class="weadmin-body">
-    <form class="layui-form">
-        <div class="layui-form-item">
-            <label for="L_nickName" class="layui-form-label">
-                <span class="we-red">*</span>登录名(域账号)
-            </label>
-            <div class="layui-input-inline">
-                <input type="text" id="L_nickName" name="nickName" lay-verify="required" autocomplete="" class="layui-input" fillin="false">
-            </div>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.jsp" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.jsp">首页</a></li>
+                <li><a href="index.jsp">网站首页</a></li>
+            </ul>
         </div>
-        <div class="layui-form-item">
-            <label for="L_roleId" class="layui-form-label">
-                <span class="we-red">*</span>角色
-            </label>
-            <div class="layui-input-inline">
-                <select name="roleId" id="L_roleId">
-                    <option th:each="item : ${sysRoleList}" th:value="${item.id}" th:text="${item.roleName}"></option>
-                </select>
-            </div>
+        <div class="top-info-wrap">
+            <ul class="top-info-list clearfix">
+                <li><a href="#"><%=((User)session.getAttribute(SESSION_USER)).getName()%></a></li>
+                <li><a href="/resetPassword.jsp">修改密码</a></li>
+                <li><a href="/logout">退出</a></li>
+            </ul>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">
-            </label>
-            <button class="layui-btn" lay-filter="add" lay-submit="">确定</button>
-        </div>
-    </form>
+    </div>
 </div>
-<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-title">
+            <h1>菜单</h1>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="#"><i class="icon-font"></i>菜单列表</a>
+                    <ul class="sub-menu">
+                        <%
+                            User user = (User) session.getAttribute(SESSION_USER);
+                            if (user.getRole()==1){
+                                out.println(" <li><a href=\"/user_action?action=list\"><i class=\"icon-font\">\uE008</i>用户管理</a></li>");
+                            }
+                            if (user.getRole()==1){
+                                out.println("  <li><a href=\"/apartment_action?action=list\"><i class=\"icon-font\">\uE005</i>宿舍楼管理</a></li>");
+                            }
+                            if (user.getRole()==1){
+                                out.println("  <li><a href=\"/dormitory_action?action=list\"><i class=\"icon-font\">\uE006</i>寝室管理</a></li>");
+                            }
+                        %>
+                        <li><a href="/waterElectricity_action?action=list"><i class="icon-font"></i>水电管理</a></li>
+                        <li><a href="/repairs_action?action=list"><i class="icon-font"></i>报修管理</a></li>
+                        <li><a href="/examination_action?action=list"><i class="icon-font"></i>查寝管理</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--/sidebar-->
+    <div class="main-wrap">
 
-<script>
-    layui.extend({
-        admin: '{/}/js/admin'
-    });
-    layui.config({
-        base: '/layui/lay/other_modules/'
-    }).extend({
-        common:'autocomplete'
-    });
-    layui.use(['form', 'jquery','util','admin', 'layer','autocomplete'], function() {
-        var form = layui.form,
-            $ = layui.jquery,
-            util = layui.util,
-            admin = layui.admin,
-            layer = layui.layer;
-        layui.autocomplete.render({
-            elem: '#L_nickName',
-            url: '/fileSysUserInfo/find_ladp_user',
-            cache: false,
-            template_val: '{{d.nick_name}}',
-            template_txt: '<span class=\'layui-badge layui-bg-gray\'>{{d.nick_name}}</span>',
-            onselect: function (resp) {
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="/index.jsp">首页</a><span class="crumb-step">&gt;</span><a class="crumb-name" href="/jscss/admin/design/">用户管理</a><span class="crumb-step">&gt;</span><span>新增用户</span></div>
+        </div>
+        <div class="result-wrap">
+            <div class="result-content">
+                <form action="/user_action" method="get" id="myform" name="myform">
+                    <table class="insert-tab" width="100%">
+                        <tbody><tr>
+                            <th width="120"><i class="require-red">*</i>角色：</th>
+                            <td>
+                                <select name="role" id="catid" class="required">
+                                    <option value="3">学生</option>
+                                    <option value="2">公寓管理员</option>
+                                    <option value="1">系统管理员</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><i class="require-red">*</i>学号：</th>
+                            <td>
+                                <input class="common-text required" id="title" name="sno" size="50" value="" type="text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>姓名：</th>
+                            <td><input class="common-text" name="name" size="50" value="" type="text"></td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td>
+                                <input name="action" value="save" type="hidden">
+                                <input class="btn btn-primary btn6 mr10" value="提交" type="submit">
+                            </td>
+                        </tr>
+                        </tbody></table>
+                </form>
+            </div>
+        </div>
 
-            }
-        })
+    </div>
+    <!--/main-->
+</div>
 
-        //监听提交
-        form.on('submit(add)', function(data) {
-            var content = data.field;
-            content['loginName'] = $('#L_nickName').attr('data-patent-first');
-            $.ajax({
-                type: "POST",
-                url: "/fileSysUserInfo/do_add",
-                data: content,
-                dataType: "json",
-                success: function(data){
-                    if (data.code==0){
-                        layer.alert("添加成功", {
-                            icon: 6
-                        }, function() {
-                            // 获得frame索引
-                            var index = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(index);
-                            parent.location.reload();
-                        });
-                    }else{
-                        layer.alert(data.msg,{icon:5});
-                    }
-                }
-            });
-            return false;
-        });
-    });
-</script>
+<%=request.getAttribute("msg")==null?"":request.getAttribute("msg")%>
+
 </body>
-
 </html>

@@ -32,9 +32,14 @@ public class User {
 
     private Integer role;
 
+    private String roleName;
+
+
     private Date createTime;
 
     private Date updateTime;
+
+    private Long dormitoryId;
 
     public Long getId() {
         return id;
@@ -92,6 +97,22 @@ public class User {
         this.updateTime = updateTime;
     }
 
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Long getDormitoryId() {
+        return dormitoryId;
+    }
+
+    public void setDormitoryId(Long dormitoryId) {
+        this.dormitoryId = dormitoryId;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -103,5 +124,11 @@ public class User {
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        User user = (User) obj;
+        return user.getId().equals(this.getId());
     }
 }

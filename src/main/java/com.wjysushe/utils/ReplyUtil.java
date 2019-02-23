@@ -21,8 +21,7 @@ package com.wjysushe.utils;
 public class ReplyUtil {
 
     public static String alter(String msg){
-        String string = "";
-
-        return string;
+        String string = "<script>alert('%s')</script>";
+        return String.format(string, msg);
     }
 }

@@ -26,6 +26,8 @@ public class Apartment {
 
     private Long managerId;
 
+    private String managerName;
+
     private String name;
 
     private Date createTime;
@@ -71,5 +73,26 @@ public class Apartment {
 
     public void setLastUpdateTime(Date lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Apartment{" +
+                "id=" + id +
+                ", managerId=" + managerId +
+                ", managerName='" + managerName + '\'' +
+                ", name='" + name + '\'' +
+                ", createTime=" + createTime +
+                ", lastUpdateTime=" + lastUpdateTime +
+                '}';
     }
 }

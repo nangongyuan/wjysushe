@@ -1,4 +1,6 @@
-<%--
+<%@ page import="java.util.List" %>
+<%@ page import="com.wjysushe.bean.User" %>
+<%@ page import="static com.wjysushe.service.UserService.SESSION_USER" %><%--
   Created by IntelliJ IDEA.
   User: ly6333
   Date: 2019/2/20
@@ -6,178 +8,142 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Arcsoft文件管理系统</title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="/static/css/font.css">
-    <link rel="stylesheet" href="/static/css/weadmin.css">
-    <script src="/static/layui/layui.js" charset="utf-8"></script>
-    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
-    <!--[if lt IE 9]>
-    <!--<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>-->
-    <!--<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>-->
-    <![endif]-->
+    <title>宿舍管理系统</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
-
 <body>
-<div class="weadmin-nav">
-			<span class="layui-breadcrumb">
-        <a href="">首页</a>
-        <a href="">用户管理</a>
-        <a><cite>用户管理</cite></a>
-      </span>
-    <a class="layui-btn layui-btn-sm" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
-        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.jsp" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.jsp">首页</a></li>
+                <li><a href="index.jsp">网站首页</a></li>
+            </ul>
+        </div>
+        <div class="top-info-wrap">
+            <ul class="top-info-list clearfix">
+                <li><a href="#"><%=((User)session.getAttribute(SESSION_USER)).getName()%></a></li>
+                <li><a href="/resetPassword.jsp">修改密码</a></li>
+                <li><a href="/logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
 </div>
-<div class="weadmin-body">
-    <div class="layui-row">
-        <form class="layui-form layui-col-md12 we-search">
-            <div class="layui-inline">
-                <input type="text" name="loginName" placeholder="登录名" autocomplete="off" class="layui-input" th:value="${query.getLoginName()}">
-            </div>
-            <div class="layui-inline">
-                <input type="text" name="mobile" placeholder="手机" autocomplete="off" class="layui-input" th:value="${query.getMobile()}">
-            </div>
-            <div class="layui-input-inline">
-                <select name="roleId">
-                    <option value="">角色</option>
-                    <option th:each="item : ${sysRoleList}" th:value="${item.id}" th:text="${item.roleName}" th:selected="${item.id eq query.roleId}"></option>
-                </select>
-            </div>
-            <button class="layui-btn" lay-submit="./list" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
-        </form>
+<div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-title">
+            <h1>菜单</h1>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="#"><i class="icon-font"></i>菜单列表</a>
+                    <ul class="sub-menu">
+                        <%
+                            User user = (User) session.getAttribute(SESSION_USER);
+                            if (user.getRole()==1){
+                                out.println(" <li><a href=\"/user_action?action=list\"><i class=\"icon-font\">\uE008</i>用户管理</a></li>");
+                            }
+                            if (user.getRole()==1){
+                                out.println("  <li><a href=\"/apartment_action?action=list\"><i class=\"icon-font\">\uE005</i>宿舍楼管理</a></li>");
+                            }
+                            if (user.getRole()==1){
+                                out.println("  <li><a href=\"/dormitory_action?action=list\"><i class=\"icon-font\">\uE006</i>寝室管理</a></li>");
+                            }
+                        %>
+                        <li><a href="/waterElectricity_action?action=list"><i class="icon-font"></i>水电管理</a></li>
+                        <li><a href="/repairs_action?action=list"><i class="icon-font"></i>报修管理</a></li>
+                        <li><a href="/examination_action?action=list"><i class="icon-font"></i>查寝管理</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-    <div class="weadmin-block">
-        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-        <button class="layui-btn" onclick="WeAdminShow('添加类别','/fileSysUserInfo/to_add',600,400)"><i class="layui-icon"></i>添加</button>
-        <span class="fr" style="line-height:40px" th:text="'共有数据：' + ${page.total}+ ' 条'"></span>
-    </div>
-    <table class="layui-table">
-        <thead>
-        <tr>
-            <th style="width: 20px;">
-                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
-            </th>
-            <th style="width: 30px">序号</th>
-            <th>登录名</th>
-            <th>用户名</th>
-            <th>邮箱</th>
-            <th>手机</th>
-            <th>地址</th>
-            <th>角色</th>
-            <th style="width: 40px;">状态</th>
-            <th style="width: 60px">操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item,status : ${page.records}">
-            <td>
-                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" th:data-id="${item.id}"><i class="layui-icon">&#xe605;</i></div>
-            </td>
-            <td th:text="${status.index+1}"></td>
-            <td th:text="${item.loginName}"></td>
-            <td th:text="${item.nickName}"></td>
-            <td th:text="${item.email}"></td>
-            <td th:text="${item.mobile}"></td>
-            <td th:text="${item.addr}"></td>
-            <td th:text="${item.roleName}"></td>
-            <td th:each="i : ${sysUserInfoStatusEnums}" th:if="${i.id eq item.statusId}" th:text="${i.name}"></td>
-            <td class="td-manage">
-                <a title="查看" th:onclick="|WeAdminEdit('查看' , '/fileSysUserInfo/to_view?id=${item.id}' , 1, 600, 550)|" href="javascript:;">
-                    <i class="layui-icon">&#xe63c;</i>
-                </a>
-                <a title="编辑" th:onclick="|WeAdminEdit('编辑' , '/fileSysUserInfo/to_edit?id=${item.id}' , 1, 600, 600)|" href="javascript:;">
-                    <i class="layui-icon">&#xe642;</i>
-                </a>
-                <a title="删除" th:onclick="|member_del(this,${item.id})|" href="javascript:;">
-                    <i class="layui-icon">&#xe640;</i>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="page" >
-        <div id="page">
+    <!--/sidebar-->
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="index.jsp">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">用户管理</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+                <form action="/user_action" method="get">
+                    <table class="search-tab">
+                        <tbody><tr>
+                            <th width="120">选择角色:</th>
+                            <td>
+                                <select name="role">
+                                    <option value="">全部</option>
+                                    <option value="1">系统管理员</option>
+                                    <option value="2">公寓管理员</option>
+                                    <option value="3">学生</option>
+                                </select>
+                            </td>
+                            <th width="70">用户名:</th>
+                            <td>
+                                <input class="common-text" placeholder="请输入用户名匹配" name="name" value="" id="" type="text">
+                            </td>
+                            <td>
+                                <input name="action" value="list" type="hidden">
+                                <input class="btn btn-primary btn2" value="查询" type="submit">
+                            </td>
+                        </tr>
+                        </tbody></table>
+                </form>
+            </div>
+        </div>
+        <div class="result-wrap">
+            <form name="myform" id="myform" method="post">
+                <div class="result-title">
+                    <div class="result-list">
+                        <a href="/user_action?action=add"><i class="icon-font"></i>新增用户</a>
+                    </div>
+                </div>
+                <div class="result-content">
+                    <table class="result-tab" width="100%">
+                        <tbody><tr>
+                            <th>ID</th>
+                            <th>角色</th>
+                            <th>学号</th>
+                            <th>姓名</th>
+                            <th>创建时间</th>
+                            <th>最后修改时间</th>
+                            <th>操作</th>
+                        </tr>
+                        <%
+                            List<User> userList = (List<User>) request.getAttribute("list");
+                            for (User item : userList) {
+                        %>
+                            <tr>
+                                <td><%=item.getId()%></td>
+                                <td><%=item.getRoleName()%></td>
+                                <td><%=item.getSno()%></td>
+                                <td><%=item.getName()%></td>
+                                <td><%=item.getCreateTime()%></td>
+                                <td><%=item.getUpdateTime()%></td>
+                                <td>
+                                    <a class="link-update" href="/user_action?action=edit&id=<%=item.getId()%>">修改</a>
+                                    <a class="link-del" href="/user_action?action=delete&id=<%=item.getId()%>" onClick="return confirm('确定要删除该用户吗？')">删除</a>
+                                </td>
+                            </tr>
+                        <%
+                            }
+                        %>
+                        </tbody></table>
+                    <div class="list-page"> 1/1 页</div>
+                </div>
+            </form>
         </div>
     </div>
 
 </div>
-<script th:inline="javascript">
-    layui.extend({
-        admin: '{/}/static/js/admin'
-    });
-    layui.use(['jquery','admin','laypage','form'], function() {
-        var laypage = layui.laypage;
-        //执行一个laypage实例
-        laypage.render({
-            elem: 'page'
-            ,count: [[${page.total}]]
-            ,curr: [[${page.current}]]
-            ,jump: function(obj, first){
-                if(!first){
-                    location.href = '/fileSysUserInfo/list?page=' + obj.curr+ "&" + layui.jquery('form').serialize();
-                }
-            }
-        });
-    });
 
-    function member_del(obj, id) {
-        layui.layer.confirm('确认要删除吗？', function(index) {
-            layui.jquery.ajax({
-                type: "POST",
-                url: "/fileSysUserInfo/delete",
-                data: {ids: id},
-                dataType: "json",
-                success: function(data){
-                    if (data.code==0){
-                        parent.parent.layui.layer.msg('已删除!', {
-                            icon: 1,
-                            time: 1000
-                        });
-                        setTimeout(function () {
-                            parent.location.reload();
-                        },1000);
-                    }else{
-                        parent.parent.layui.layer.alert(data.msg,{icon:5});
-                    }
-                }
-            });
-            layui.layer.close(index);
-        });
-    }
+<%=request.getAttribute("msg")==null?"":request.getAttribute("msg")%>
 
-    function delAll(argument) {
-        var data = tableCheck.getData();
-        layer.confirm('确认要删除吗？' + data, function(index) {
-            layui.jquery.ajax({
-                type: "POST",
-                url: "/fileSysUserInfo/delete",
-                data: {ids: data.join(',')},
-                dataType: "json",
-                success: function(data){
-                    if (data.code==0){
-                        parent.parent.layui.layer.msg('已删除!', {
-                            icon: 1,
-                            time: 1000
-                        });
-                        setTimeout(function () {
-                            parent.location.reload();
-                        },1000);
-                    }else{
-                        parent.parent.layui.layer.alert(data.msg,{icon:5});
-                    }
-                }
-            });
-            layui.layer.close(index);
-        });
-    }
-
-</script>
 </body>
-
 </html>

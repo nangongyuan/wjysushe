@@ -7,68 +7,37 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Arcsoft文件管理系统</title>
-    <meta name="renderer" content="webkit|ie-comp|ie-stand">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/static/css/font.css">
-    <link rel="stylesheet" href="/static/css/weadmin.css">
-    <script src="/static/layui/layui.js" charset="utf-8"></script>
-
+    <meta charset="UTF-8"/>
+    <title>宿舍管理系统</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/admin_login.css"/>
 </head>
-<body class="login-bg">
-
-<div class="login">
-    <div class="message">Arcsoft文件管理系统</div>
-    <div id="darkbannerwrap"></div>
-
-    <form method="get" class="layui-form">
-        <input name="loginName" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
-        <hr class="hr15">
-        <input name="pwd" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
-        <hr class="hr15">
-        <input class="loginin" value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
-        <hr class="hr20" >
-    </form>
+<body>
+<div class="admin_login_wrap">
+    <h1>宿舍管理系统</h1>
+    <div class="adming_login_border">
+        <div class="admin_input">
+            <form action="/login" method="get">
+                <ul class="admin_items">
+                    <li>
+                        <label for="user">学号：</label>
+                        <input type="text" name="sno" value="" id="user" size="40" class="admin_input_style" />
+                    </li>
+                    <li>
+                        <label for="pwd">密码：</label>
+                        <input type="password" name="password" value="" id="pwd" size="40" class="admin_input_style" />
+                    </li>
+                    <li>
+                        <input type="submit" tabindex="3" value="提交" class="btn btn-primary" />
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
 </div>
 
-<script type="text/javascript">
+<%=request.getAttribute("msg")==null?"":request.getAttribute("msg")%>
 
-    layui.extend({
-        admin: '{/}./static/js/admin'
-    });
-    layui.use(['form','admin'], function(){
-        var form = layui.form
-            ,admin = layui.admin;
-        form.on('submit(login)', function(data){
-            layui.jquery.ajax({
-                type: "get",
-                url: "/fileSysUserInfo/login",
-                data: data.field,
-                dataType: "json",
-                success: function(data){
-                    console.log(data);
-                    if (data.code==0) {
-                        layui.sessionData('userInfo', {
-                            key: 'nickname'
-                            ,value: data.data
-                        });
-                        location.href = "/index";
-                    }else{
-                        layui.layer.alert(data.msg,{icon:5});
-                    }
-                }
-            });
-            console.log(data);
-            return false;
-        });
-    });
-</script>
-<!-- 底部结束 -->
 </body>
 </html>

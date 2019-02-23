@@ -30,12 +30,22 @@ public class UserDao {
 
     public List<User> list(String where){
         String sql = "select * from user where 1=1 ";
+        if (where != null){
+            sql += where;
+        }
         List<Map<String, Object>> mapList = new DBHelper().query(sql,null);
         List<User> userList = new LinkedList<>();
         for (Map<String, Object> item : mapList) {
             User user = new User();
             user.setId((Long) item.get("id"));
             user.setRole((Integer) item.get("role"));
+            if (user.getRole() == 1){
+                user.setRoleName("系统管理员");
+            }else if (user.getRole() == 2){
+                user.setRoleName("公寓管理员");
+            }else if (user.getRole() == 3){
+                user.setRoleName("学生");
+            }
             user.setSno((String) item.get("sno"));
             user.setName((String) item.get("name"));
             user.setPassword((String) item.get("password"));
@@ -59,9 +69,42 @@ public class UserDao {
     }
 
     public Integer update(User user){
-        String sql = "update user set role=?, sno=?, name=?, password=? where id=?";
-        int ret = new DBHelper().update(sql, user.getRole(), user.getSno(), user.getName(), user.getPassword(), user.getId());
+        String sql = "update user set role=?, sno=?, name=? where id=?";
+        int ret = new DBHelper().update(sql, user.getRole(), user.getSno(), user.getName(), user.getId());
         return ret;
     }
 
+    public Integer resetPassword(String userId, String password){
+        String sql = "update user set password=? where id=?";
+        int ret = new DBHelper().update(sql, password, userId);
+        return ret;
+    }
+
+
+    public List<User> listMember(String dormitoryId){
+        String sql = "select user.* from user,dormitory_student where dormitory_student.student_id=user.id and dormitory_student.dormitory_id="+dormitoryId;
+        List<Map<String, Object>> mapList = new DBHelper().query(sql,null);
+        List<User> userList = new LinkedList<>();
+        for (Map<String, Object> item : mapList) {
+            User user = new User();
+            user.setId((Long) item.get("id"));
+            user.setRole((Integer) item.get("role"));
+            user.setSno((String) item.get("sno"));
+            user.setName((String) item.get("name"));
+            userList.add(user);
+        }
+        return userList;
+    }
+
+    public Integer saveDormitoryMember(Long dormitoryId, String studentId){
+        String sql = "insert into dormitory_student (dormitory_id, student_id) values (?, ?)";
+        int ret = new DBHelper().save(sql, dormitoryId, studentId);
+        return ret;
+    }
+
+    public Integer deleteDormitoryMember(Long dormitoryId){
+        String sql = "delete from dormitory_student where dormitory_id=" + dormitoryId;
+        int ret = new DBHelper().delete(sql);
+        return ret;
+    }
 }
